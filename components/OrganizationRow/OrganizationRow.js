@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-import icons from '../../icons/css/icons.css'
+import icons from '../../icons/css/fontello.css'
 import s from './OrganizationRow.css'
 
 import Link from '../Link'
@@ -21,7 +21,7 @@ const OrganizationRow = (props) => (
               {props.organization.long_description}
             </div>
             <div className="organization-item-box-caret">
-              <i className={`${icons.iconRightOpen2} s.rightCaret`}></i>
+              <i className={`${icons.iconRightOpen2} s.rightCaret icon-right-open-2`}></i>
             </div>
           </div>
         </div>

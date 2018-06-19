@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import globalConfig from '../../config'
 
-import icons from '../../icons/css/icons.css'
+import icons from '../../icons/css/fontello.css'
 import { fetchTaxonomies } from '../../core/firebaseRestAPI'
 import { taxonomiesWithIcons } from '../../lib/taxonomies'
 
@@ -15,9 +15,9 @@ const objToFilteredList = (obj) => (
 )
 
 const convertToQueryObject = (state) => {
-  const { sortBy, hours, services, demographics, gender } = state
+  const { sort, hours, services, demographics, gender } = state
   const query = {
-    sortBy,
+    sort,
     hours,
     services: objToFilteredList(services),
     demographics: objToFilteredList(demographics),
@@ -31,7 +31,7 @@ class OptionsPage extends Component {
     super(props)
     this.state = {
       taxonomies: [],
-      sortBy: 'name',
+      sort: 'name',
       hours: 'all',
       services: {
         food: false,
@@ -72,18 +72,6 @@ class OptionsPage extends Component {
     })
   }
 
-  setSortBy(sortBy) {
-    this.setState({ sortBy })
-  }
-
-  setHours(hours) {
-    this.setState({ hours })
-  }
-
-  setGender(gender) {
-    this.setState({ gender })
-  }
-
   toggleService(service) {
     const { services } = this.state
     const newServices = Object.assign({}, services)
@@ -108,25 +96,15 @@ class OptionsPage extends Component {
   }
 
   toggleHours() {
-    this.setState({ showHours: !this.state.showHours })
-    if (this.state.showHours) {
-      this.setHours('open')
-      this.setState({ hours: 'open' })
-    } else {
-      this.setHours('all')
-      this.setState({ hours: 'all' })
-    }
-  }
+     const showHours = !this.state.showHours
+     const hours = showHours ? 'open' : 'all'
+     this.setState({ showHours, hours })
+   }
 
   toggleDistance() {
-    this.setState({ sortByDistance: !this.state.sortByDistance })
-    if (this.state.sortByDistance) {
-      this.setSortBy('distance')
-      this.setState({ sortBy: 'distance' })
-    } else {
-      this.setSortBy('name')
-      this.setState({ sortBy: 'name' })
-    }
+    const sortByDistance = !this.state.sortByDistance
+    const sort = sortByDistance ? 'dist' : 'name'
+    this.setState({ sortByDistance, sort })
   }
 
   render() {
@@ -278,14 +256,14 @@ const ServiceFilter = (props) => (
   <button className={[s.service, props.active ? s.active : ''].join(' ')} {...filterOut(props, ['active', 'category'])}>
     <i className={`${s.categoryIcon} ${props.category.icon}`}></i>
     <span className={s.categoryTitle}>{props.category.name}</span>
-    <i className={`${props.active ? icons.iconCheck:icons.iconCheckEmpty} ${s.checkBox}`}></i>
+    <i className={`${props.active ? icons.iconCheck:icons.iconCheckEmpty} ${props.active ? 'icon-check' : 'icon-check-empty'} ${s.checkBox}`}></i>
   </button>
 )
 
 const DemographicsButton = (props) => (
   <button className={[s.button, s.demographicsButton, props.active ? s.active : ''].join(' ')} {...filterOut(props, ['active'])}>
     <span className={s.demographicsTitle}>{props.children}</span>
-    <i className={`${props.active ? icons.iconCheck:icons.iconCheckEmpty} ${s.checkBox}`}></i>
+    <i className={`${props.active ? icons.iconCheck:icons.iconCheckEmpty} ${props.active ? 'icon-check' : 'icon-check-empty'} ${s.checkBox}`}></i>
   </button>
 )
 

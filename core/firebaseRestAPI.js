@@ -44,6 +44,15 @@ const SERVICE_SCHEMA =
     taxonomy: '',
   }
 
+const ORGANIZATION_SCHEMA =
+  {
+    id: '',
+    longDescription: '',
+    name: '',
+    phones: [],
+    url: '',
+  }
+
 function authToken() {
   return '?auth=' + currentUser().token
 }
@@ -57,6 +66,16 @@ export function fetchTaxonomies() {
   return fetch(url)
     .then(response => response.json())
     .then(json => Object.keys(json))
+}
+
+function ensureDefaultsForOrganization(organization) {
+  return R.merge(ORGANIZATION_SCHEMA, camelize(organization))
+}
+
+function ensureDefaultsForOrganizations(organizations) {
+  return Object.keys(organizations).map(orgId => {
+    return ensureDefaultsForOrganization(organizations[orgId])
+  })
 }
 
 function ensureDefaultsForService(service) {
@@ -125,6 +144,8 @@ export function fetchLocation(id) {
 }
 
 export function updateLocation(location) {
+  if (!location.id) { return }
+
   const url = [
     config.firebaseDatabaseUrl,
     LOCATIONS,
@@ -144,11 +165,13 @@ export function updateLocation(location) {
 }
 
 export function deleteLocation(id) {
+  if (!id) { return }
+
   const url = [
     config.firebaseDatabaseUrl,
     LOCATIONS,
     id
-  ].join(SLASH).concat(FORMAT)
+  ].join(SLASH).concat(FORMAT).concat(authToken())
 
   return fetch(url, {method: 'DELETE'})
 }
@@ -161,11 +184,7 @@ export function fetchOrganizations() {
 
   return fetch(url)
     .then(response => response.json())
-    .then(organizations => {
-      return Object.keys(organizations).map(orgId => (
-        camelize(organizations[orgId])
-      ))
-    })
+    .then(organizations => ensureDefaultsForOrganizations(organizations))
 }
 
 export function fetchOrganization(id) {
@@ -177,10 +196,12 @@ export function fetchOrganization(id) {
 
   return fetch(url)
     .then(response => response.json())
-    .then(json => camelize(json))
+    .then(json => ensureDefaultsForOrganization(json))
 }
 
 export function updateOrganization(organization) {
+  if (!organization.id) { return }
+
   const url = [
     config.firebaseDatabaseUrl,
     ORGANIZATIONS,
@@ -200,11 +221,13 @@ export function updateOrganization(organization) {
 }
 
 export function deleteOrganization(id) {
+  if (!id) { return }
+
   const url = [
     config.firebaseDatabaseUrl,
     ORGANIZATIONS,
     id
-  ].join(SLASH).concat(FORMAT)
+  ].join(SLASH).concat(FORMAT).concat(authToken())
 
   return fetch(url, {method: 'DELETE'})
 }

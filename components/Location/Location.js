@@ -1,12 +1,14 @@
 import React, { PropTypes } from 'react'
 import s from './Location.css'
-import icons from '../../icons/css/icons.css'
+import icons from '../../icons/css/fontello.css'
 
 import { relevantTaxonomies, getIcon } from '../../lib/taxonomies'
 import { capitalize } from '../../lib/stringHelpers'
 
 import Link from '../Link'
 import GoogleMap from '../GoogleMap'
+
+const nl2br = require('react-nl2br');
 
 const getGender = (abbr) => {
   if (abbr === '' || abbr === 'MF' || abbr === 'FM') return 'Everyone'
@@ -256,7 +258,7 @@ const Location = (props) => {
           <li key={`service-${index}`} className={s.insetServices}>
             <div className={s.noteWrapper}>
               <h3 className={s.serviceTitle}>{service.name}</h3>
-              <p className={s.serviceDescription}>{service.description}</p>
+              <p className={s.serviceDescription}>{nl2br(service.description)}</p>
               <Schedule schedules={service.schedules} />
             </div>
             <div className={s.notes}>

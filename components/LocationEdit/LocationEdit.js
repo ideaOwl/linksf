@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import s from './LocationEdit.css'
-import icons from '../../icons/css/icons.css'
+import icons from '../../icons/css/fontello.css'
 
 import { uuid } from '../../lib/uuid'
 
@@ -29,13 +29,13 @@ const placeholderAddressText = (physicalAddress) => {
 }
 
 class LocationEdit extends Component {
-   updateLocation = (field, value) => {
+   updateLocation = (field, value, save) => {
     const { index, location, handleChange } = this.props
     const newLocation = location
 
     newLocation[field] = value
 
-    handleChange(newLocation, index)
+    handleChange(newLocation, index, save)
   }
 
    deleteLocation = () => {
@@ -71,7 +71,7 @@ class LocationEdit extends Component {
 
    newService = () => {
     const { location } = this.props
-    const newServices = location.services || []
+    const newServices = location.services || {}
     const newService = blankService(location)
 
     newServices[newService.id] = newService
@@ -84,10 +84,14 @@ class LocationEdit extends Component {
     const { services } = this.props.location
     const newServices = services
 
-    delete newServices[service.id]
+    const answer = confirm(`Are you sure you want to delete the service: ${service.name}? You cannot undo this or recover the data.`)
 
-    this.updateLocation('services', newServices)
-    this.selectService(null)
+    if (answer) {
+      delete newServices[service.id]
+
+      this.updateLocation('services', newServices, true)
+      this.selectService(null)
+    }
   }
 
   selectService = (service) => {
